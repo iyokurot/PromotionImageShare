@@ -7,7 +7,7 @@ class Menu extends React.Component {
 
     render() {
         return (
-            <div class="Menu">
+            <div className="Menu">
 
                 serch:add
                 <form onSubmit={this.submitSerch}>
@@ -22,7 +22,7 @@ class Menu extends React.Component {
         this.props.history.push('/addimage')
     }
     submitSerch = () => {
-        alert("serch");
+        alert(__dirname);
     }
 }
 

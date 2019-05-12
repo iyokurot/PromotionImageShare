@@ -1,38 +1,11 @@
 
-/*
-export default function mysqlLoad() {
-    // requireの設定
-    const mysql = require('mysql');
-
-    // MySQLとのコネクションの作成
-    let connection = mysql.createConnection({
-        host: '127.0.0.1',
-        user: 'root',
-        database: 'promotion',
-        password: 'kayopile'
-    });
-
-    // 接続
-    connection.connect();
-
-    // userdataの取得
-    connection.query('SELECT * from tags;', function (err, rows, fields) {
-        if (err) { console.log('err: ' + err); }
-
-        for (var i = 0; i < rows.length; i++) {
-            console.log('name: ' + rows[i].name);
-        }
-
-
-    });
-    // 接続終了
-    connection.end();
-
-}
-*/
-
 const express = require("express");
 const app = express();
+
+
+const multer = require('multer');
+
+
 
 app.get("/", function (req, res) {
     res.send("go to /posts to see posts");
@@ -47,6 +20,7 @@ app.use(function (req, res, next) {
         "Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept"
     );
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     next();
 });
 
@@ -94,4 +68,21 @@ app.get("/images", function (req, res) {
         if (error) throw error;
         res.send(results);
     });
+});
+
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'http://192.168.1.3/picture/');
+    }
+});
+const upload = multer({ dest: './promotionImages' });
+
+
+app.post('/uploadimage', upload.fields([{ name: 'addnewimage' }]), (req, res) => {
+    const addnewimage = req.files;
+
+    const target_path = './' + addnewimage.name;
+
+    res.json({ message: 'File uploaded to: ' + target_path + ' - ' + addnewimage.size + ' bytes' });
 });

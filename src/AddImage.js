@@ -11,6 +11,7 @@ export default class AddImage extends Component {
             images: []
         };
         this.handleOnDrop = this.handleOnDrop.bind(this);
+        this.uploadaddImage = this.uploadaddImage.bind(this);
     }
     handleOnDrop = (files) => {
 
@@ -22,21 +23,32 @@ export default class AddImage extends Component {
                     images: this.state.images.concat(images)
                 });
 
-                console.log(images);
                 console.log(this.state.images);
             }).catch(e => console.log(e));
 
     }
 
-    uploadImage(file) {
+    uploadImage = (file) => {
         console.log(file.name);
         const name = file.name;
 
         return {
             name,
         }
-
     }
+
+    uploadaddImage() {
+        if (this.state.images != null) {
+            const imagedata = new FormData();
+            imagedata.append('addnewimage', this.state.images);
+
+            fetch('http://localhost:4000/uploadimage',
+                { mode: 'cors', method: 'POST', body: imagedata })
+
+        }
+        alert("upload!")
+    }
+
     render() {
         return (
             <div>
@@ -58,16 +70,22 @@ export default class AddImage extends Component {
                 </div>
                 <div>
                     files
-                    {this.state.images.map(image =>
-                        <div>
-                            <p>name:{image.name}</p>
-                        </div>
-                    )}
+                <hr></hr>
+                    <ul>
+                        {this.state.images.map(image =>
+                            <div>
+                                <li>
+                                    <p>name:<input value={image.name}></input>
+                                        file:{image.name}
+                                    </p>
+                                    tags:<button>+</button>
+                                </li>
+                            </div>
+                        )}
+                    </ul>
                 </div>
-                <input type="text" placeholder="ファイル名"></input>
-                <input type="number"></input>
 
-                <button>Add</button>
+                <button onClick={this.uploadaddImage}>Add</button>
             </div>
         );
     }

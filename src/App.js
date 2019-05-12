@@ -33,11 +33,11 @@ class App extends React.Component {
     return (
       <div>
         <Menu />
-        <div class="App">
-          <div class="tag-select-area">
+        <div className="App">
+          <div className="tag-select-area">
             <ul>
               {this.state.posts.map(post => (
-                <li>
+                <li key={post.id}>
                   <button onClick={this.serchtag.bind(this, post.name)}>#{post.name}</button>
                 </li>
               ))}
@@ -64,17 +64,18 @@ class Pictures extends React.Component {
   }
   render() {
     return (
-      <div class="picture-select-area">{this.state.posts.map(post => (
-        <div class="images">
-          <div class="images-inner">
+      <div className="picture-select-area">{this.state.posts.map(post => (
+        <div className="images" key={post.id}>
+          <div className="images-inner" key={post.id}>
 
-            <div class="image-sqare">
-              <img src={post.url} class="img"></img><br></br>
+            <div className="image-sqare" key={post.id}>
+              <img src={post.url} className="img" key={post.id}></img><br></br>
             </div>
           </div>
           <a href={post.url} download>{post.name}</a>
         </div>
       ))}
+
       </div>
     );
   }
