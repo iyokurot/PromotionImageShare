@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
+import axios from "axios"
 
 import './css/AddImage.css';
 
@@ -23,30 +24,49 @@ export default class AddImage extends Component {
                     images: this.state.images.concat(images)
                 });
 
-                console.log(this.state.images);
+                //console.log(this.state.images[0]);
             }).catch(e => console.log(e));
 
     }
 
     uploadImage = (file) => {
-        console.log(file.name);
+        console.log(file);
+        /*
         const name = file.name;
+        const path = file.path;
+        const type = file.type;
+        */
 
         return {
-            name,
+            file
         }
     }
 
     uploadaddImage() {
-        if (this.state.images != null) {
+        if (this.state.images != []) {
             const imagedata = new FormData();
-            imagedata.append('addnewimage', this.state.images);
+            imagedata.append('addnewimage', this.state.images[0].file);
 
             fetch('http://localhost:4000/uploadimage',
-                { mode: 'cors', method: 'POST', body: imagedata })
+                {
+                    mode: 'cors', method: 'POST', body: imagedata
+                })
+                .then((Response) => {
+                    alert("upload!");
+                    //console.log(imagedata.addnewimage);
+                    //console.log(this.state.images[0].file);
+                }).catch((error) => {
+                    alert("failed");
+                });
+            fetch('http://192.168.1.3/picture/',
+                {
+                    mode: 'cors', method: 'POST', body: imagedata
+                })
 
+        } else {
+            alert("No image!")
         }
-        alert("upload!")
+
     }
 
     render() {
@@ -73,10 +93,11 @@ export default class AddImage extends Component {
                 <hr></hr>
                     <ul>
                         {this.state.images.map(image =>
-                            <div>
+                            <div key={image.file.path}>
                                 <li>
-                                    <p>name:<input value={image.name}></input>
-                                        file:{image.name}
+                                    <p>name:<input value={image.file.name}></input>
+                                        file:{image.file.name},
+                                        path:{image.file.path}
                                     </p>
                                     tags:<button>+</button>
                                 </li>

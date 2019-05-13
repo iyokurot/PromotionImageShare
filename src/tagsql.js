@@ -70,19 +70,29 @@ app.get("/images", function (req, res) {
     });
 });
 
-
+const url = "promotionImages";//"http://192.168.1.3/picture/";//__dirname;
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'http://192.168.1.3/picture/');
+        // 保存したいパス
+
+        cb(null, url);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+
     }
 });
-const upload = multer({ dest: './promotionImages' });
+const upload = multer({
+    storage: storage
+});
 
 
-app.post('/uploadimage', upload.fields([{ name: 'addnewimage' }]), (req, res) => {
-    const addnewimage = req.files;
+app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next) {
+    const addnewimage = req.body;
+    const req_file_json = JSON.stringify(req.file);
+    const fname = JSON.stringify(req.file.filename);
+    console.log(req_file_json);
+    console.log(fname);
 
-    const target_path = './' + addnewimage.name;
-
-    res.json({ message: 'File uploaded to: ' + target_path + ' - ' + addnewimage.size + ' bytes' });
+    res.json({ 'result': 'success!' });
 });
