@@ -69,7 +69,7 @@ class Pictures extends React.Component {
           <div className="images-inner" key={post.id}>
 
             <div className="image-sqare" key={post.id}>
-              <img src={post.url} className="img" key={post.id}></img><br></br>
+              <img src={post.url} alt={post.name} className="img" key={post.id}></img><br></br>
             </div>
           </div>
           <a href={post.url} download>{post.name}</a>

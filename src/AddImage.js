@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
-import axios from "axios"
 
 import './css/AddImage.css';
 
@@ -43,7 +42,7 @@ export default class AddImage extends Component {
     }
 
     uploadaddImage() {
-        if (this.state.images != []) {
+        if (this.state.images !== []) {
             const imagedata = new FormData();
             imagedata.append('addnewimage', this.state.images[0].file);
 
@@ -58,10 +57,12 @@ export default class AddImage extends Component {
                 }).catch((error) => {
                     alert("failed");
                 });
+            /*
             fetch('http://192.168.1.3/picture/',
                 {
                     mode: 'cors', method: 'POST', body: imagedata
-                })
+                })                
+                */
 
         } else {
             alert("No image!")
