@@ -57,12 +57,6 @@ export default class AddImage extends Component {
                 }).catch((error) => {
                     alert("failed");
                 });
-            /*
-            fetch('http://192.168.1.3/picture/',
-                {
-                    mode: 'cors', method: 'POST', body: imagedata
-                })                
-                */
 
         } else {
             alert("No image!")
@@ -97,8 +91,7 @@ export default class AddImage extends Component {
                             <div key={image.file.path}>
                                 <li>
                                     <p>name:<input value={image.file.name}></input>
-                                        file:{image.file.name},
-                                        path:{image.file.path}
+                                        file:{image.file.name}
                                     </p>
                                     tags:<button>+</button>
                                 </li>

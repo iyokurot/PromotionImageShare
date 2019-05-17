@@ -70,7 +70,9 @@ app.get("/images", function (req, res) {
     });
 });
 
-const url = "promotionImages";//"http://192.168.1.3/picture/";//__dirname;
+app.use("/imagepath", express.static(__dirname + "/promotionImages"));
+
+const url = "promotionImages";
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // 保存したいパス
@@ -90,9 +92,22 @@ const upload = multer({
 app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next) {
     const addnewimage = req.body;
     const req_file_json = JSON.stringify(req.file);
+    const originalname = JSON.stringify(req.file.originalname);
     const fname = JSON.stringify(req.file.filename);
-    console.log(req_file_json);
+    //console.log(req_file_json);
+    console.log(originalname);
     console.log(fname);
+    const thisURL = "http://localhost:4000/imagepath/" + req.file.originalname;
+    const filename = req.file.originalname;
+
+    //Mysqlにinsert
+    connection.query('INSERT INTO images (url, name, sizeH, sizeW) VALUES (?, ?, ?, ?)', [thisURL, filename, 10, 10], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+    });
 
     res.json({ 'result': 'success!' });
 });

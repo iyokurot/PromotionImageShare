@@ -75,7 +75,6 @@ class Pictures extends React.Component {
           <a href={post.url} download>{post.name}</a>
         </div>
       ))}
-
       </div>
     );
   }
