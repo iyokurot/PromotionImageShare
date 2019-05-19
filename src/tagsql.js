@@ -5,7 +5,10 @@ const app = express();
 
 const multer = require('multer');
 
-
+var bodyParser = require('body-parser');
+app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get("/", function (req, res) {
     res.send("go to /posts to see posts");
@@ -23,6 +26,7 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     next();
 });
+
 
 
 //MySQL---------------------------------------
@@ -70,18 +74,29 @@ app.get("/images", function (req, res) {
     });
 });
 
+app.post("/findimage", function (req, res, next) {
+    const id = req.body;
+    console.log(id);
+    connection.query('SELECT * from images where id=?', [13], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
 app.use("/imagepath", express.static(__dirname + "/promotionImages"));
 
 const url = "promotionImages";
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // 保存したいパス
-
         cb(null, url);
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
-
     }
 });
 const upload = multer({
@@ -90,24 +105,25 @@ const upload = multer({
 
 
 app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next) {
-    const addnewimage = req.body;
+    const addnewimage = req.body['imageTitle'];
     const req_file_json = JSON.stringify(req.file);
     const originalname = JSON.stringify(req.file.originalname);
     const fname = JSON.stringify(req.file.filename);
-    //console.log(req_file_json);
-    console.log(originalname);
-    console.log(fname);
+    //console.log(originalname);
+    //console.log(fname);
     const thisURL = "http://localhost:4000/imagepath/" + req.file.originalname;
-    const filename = req.file.originalname;
+    const filename = addnewimage;
+    const filesize = req.file.size;
 
     //Mysqlにinsert
-    connection.query('INSERT INTO images (url, name, sizeH, sizeW) VALUES (?, ?, ?, ?)', [thisURL, filename, 10, 10], function (
+    connection.query('INSERT INTO images (url, name, size) VALUES (?, ?, ?)', [thisURL, filename, filesize], function (
         error,
         results,
         fields
     ) {
         if (error) throw error;
     });
+
 
     res.json({ 'result': 'success!' });
 });

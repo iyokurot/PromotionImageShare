@@ -3,6 +3,8 @@ import './App.css';
 
 import AddImage from './AddImage';
 import Menu from './Menu';
+import Pictures from './Pictures'
+import ImageDetail from './ImageDetail';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
 
 const Apps = () => (
@@ -13,6 +15,7 @@ const Apps = () => (
       <Link to='/'>top</Link>
       <Route exact path='/' component={App} />
       <Route path='/addimage' component={AddImage} />
+      <Route path='/imagedetail/:id' component={ImageDetail} />
 
 
     </div>
@@ -53,32 +56,7 @@ class App extends React.Component {
   }
 }
 
-class Pictures extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { posts: [] };
 
-    fetch("http://localhost:4000/images")
-      .then(response => response.json())
-      .then(posts => this.setState({ posts }));
-  }
-  render() {
-    return (
-      <div className="picture-select-area">{this.state.posts.map(post => (
-        <div className="images" key={post.id}>
-          <div className="images-inner" key={post.id}>
-
-            <div className="image-sqare" key={post.id}>
-              <img src={post.url} alt={post.name} className="img" key={post.id}></img><br></br>
-            </div>
-          </div>
-          <a href={post.url} download>{post.name}</a>
-        </div>
-      ))}
-      </div>
-    );
-  }
-}
 
 
 
