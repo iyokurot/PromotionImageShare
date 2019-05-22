@@ -5,10 +5,14 @@ const app = express();
 
 const multer = require('multer');
 
+
 var bodyParser = require('body-parser');
-app.use(bodyParser());
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+var urlparser = bodyParser.urlencoded({ extended: false });
+
 
 app.get("/", function (req, res) {
     res.send("go to /posts to see posts");
@@ -74,10 +78,12 @@ app.get("/images", function (req, res) {
     });
 });
 
-app.post("/findimage", function (req, res, next) {
-    const id = req.body;
-    console.log(id);
-    connection.query('SELECT * from images where id=?', [13], function (
+//選択画像取得
+app.post("/findimage", urlparser, function (req, res, next) {
+    res.setHeader('Content-Type', 'text/plain');
+
+    const id = req.body['imageid'];
+    connection.query('SELECT * from images where id=?', [id], function (
         error,
         results,
         fields
@@ -87,6 +93,7 @@ app.post("/findimage", function (req, res, next) {
     });
 });
 
+//保存ディレクトリ
 app.use("/imagepath", express.static(__dirname + "/promotionImages"));
 
 const url = "promotionImages";
@@ -102,15 +109,9 @@ var storage = multer.diskStorage({
 const upload = multer({
     storage: storage
 });
-
-
+//画像のアップロード
 app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next) {
     const addnewimage = req.body['imageTitle'];
-    const req_file_json = JSON.stringify(req.file);
-    const originalname = JSON.stringify(req.file.originalname);
-    const fname = JSON.stringify(req.file.filename);
-    //console.log(originalname);
-    //console.log(fname);
     const thisURL = "http://localhost:4000/imagepath/" + req.file.originalname;
     const filename = addnewimage;
     const filesize = req.file.size;
@@ -126,4 +127,16 @@ app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next)
 
 
     res.json({ 'result': 'success!' });
+});
+//画像の削除
+app.put('/deleteimage', function (req, res) {
+    const id = req.body['imageid'];
+    connection.query('DELETE from images where id=?', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
 });
