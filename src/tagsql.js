@@ -67,6 +67,47 @@ app.get("/tags", function (req, res) {
     });
 });
 
+app.post('/gettags', function (req, res) {
+    const id = req.body;
+    var str = [];
+    for (var i in id) {
+        str.push(id[i].tagid);
+    }
+    connection.query('SELECT * from tags where id in (?)', [str], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+
+});
+
+app.post('/addtags', function (req, res) {
+    const tag = req.body['newtag'];
+    connection.query('INSERT INTO tags (name) VALUES (?)', [tag], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+app.post('/gettagtoimage', function (req, res) {
+    const id = req.body['imageid'];
+    connection.query('SELECT * from tagtoimage where imageid=?', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
 app.get("/images", function (req, res) {
     connection.query('SELECT * from images LIMIT 0, 100', function (
         error,

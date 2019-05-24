@@ -10,9 +10,11 @@ class ImageDetail extends Component {
         this.state = {
             imageid: id,
             file: [],
-            defaultTags: [],
-            tags: [],
-            newtag: ""
+            defaultTags: [],//全タグ
+            tagtoimage: [],//タグとイメージ関係
+            deftags: [],//すでに設定されているタグ
+            tags: [],//設定タグ
+            newtag: ""//追加するタグ
         };
 
         const data = {
@@ -33,8 +35,34 @@ class ImageDetail extends Component {
             .then(response => response.json())
             .then(posts => this.setState({ defaultTags: posts }));
         //タグ関係取得
+        fetch("http://localhost:4000/gettagtoimage", {
+            method: 'POST', body: JSON.stringify(data), mode: 'cors',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            }
+        })
+            .then(response => response.json())
+            .then(posts => {
+                this.setState({ tagtoimage: posts });
 
-        //タグ取得
+                if (posts.length > 0) {
+                    //タグ取得
+                    fetch("http://localhost:4000/gettags", {
+                        method: 'POST', body: JSON.stringify(posts), mode: 'cors',
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(posts => {
+                            this.setState({
+                                deftags: posts,
+                                tags: posts
+                            });
+                        });
+                }
+            });
+
 
 
         this.test = this.test.bind(this);
@@ -60,7 +88,7 @@ class ImageDetail extends Component {
 
 
                     tags:{this.state.tags.map(tag => (
-                        <span className="tag">#{tag} </span>
+                        <span className="tag" key={tag.name}>#{tag.name} </span>
                     ))}
                     <input type="text" autoComplete="on" list="deftags" onChange={e => this.onChangeAddtag(e)}></input>
 
@@ -73,7 +101,7 @@ class ImageDetail extends Component {
 
                     <button onClick={this.addtag}>#</button><br></br>
 
-                    <button onClick={this.test} className="buttons">更新</button>
+                    <button onClick={this.onUpdate} className="buttons">更新</button>
                     <button onClick={this.onDelete} className="buttons">削除</button>
                 </div>
             </div>
@@ -83,22 +111,66 @@ class ImageDetail extends Component {
         alert("test message");
     }
     addtag() {
-        if (!this.notIntags()) {
-            this.setState({
-                tags: this.state.tags.concat(this.state.newtag)
+        //新規タグか
+        if (this.notIndefault()) {
+            //タグ追加
+            const data = {
+                newtag: this.state.newtag
+            };
+            fetch("http://localhost:4000/addtags", {
+                method: 'POST', body: JSON.stringify(data), mode: 'cors',
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            }).then((res) => {
+                //タグ更新
+                //タグ一覧取得
+                fetch("http://localhost:4000/tags")
+                    .then(response => response.json())
+                    .then(posts => this.setState({ defaultTags: posts }));
             })
-            console.log(this.state.tags);
         }
+
+        //同一タグが含まれているか
+        if (this.notIntags()) {
+            const nt = {
+                id: "n",
+                name: this.state.newtag
+            }
+            this.setState({
+                tags: this.state.tags.concat(nt)
+            })
+        }
+    }
+    notIndefault() {
+        var bool = true;
+        for (var i in this.state.defaultTags) {
+            if (this.state.defaultTags[i].name === this.state.newtag) {
+                bool = false;
+            }
+        }
+        return bool;
     }
 
     notIntags() {
-        return this.state.tags.includes(this.state.newtag);
+        var bool = true;
+        for (var i in this.state.tags) {
+            if (this.state.tags[i].name === this.state.newtag) {
+                bool = false;
+            }
+        }
+        return bool;
     }
 
     onChangeAddtag(e) {
         this.setState({
             newtag: e.target.value
         });
+    }
+    onUpdate = () => {
+
+        //更新POST
+        alert("更新しました");
     }
 
     onDelete = () => {
