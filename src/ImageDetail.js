@@ -10,11 +10,13 @@ class ImageDetail extends Component {
         this.state = {
             imageid: id,
             file: [],
+            renewNickname: "",//新しい名前
             defaultTags: [],//全タグ
             tagtoimage: [],//タグとイメージ関係
             deftags: [],//すでに設定されているタグ
             tags: [],//設定タグ
-            newtag: ""//追加するタグ
+            newtag: "",//追加するタグ
+            deldeftags: []//設定されているタグから削除するidリスト
         };
 
         const data = {
@@ -29,7 +31,10 @@ class ImageDetail extends Component {
             }
         })
             .then(response => response.json())
-            .then(posts => this.setState({ file: posts }));
+            .then(posts => this.setState({
+                file: posts,
+                renewNickname: posts[0].name
+            }));
         //タグ一覧取得
         fetch("http://localhost:4000/tags")
             .then(response => response.json())
@@ -80,7 +85,7 @@ class ImageDetail extends Component {
                             <div className="topImage" key={image.id}>
                                 <img src={image.url} alt={image.name} className="img" key={image.id}></img>
                             </div>
-                            <span>name:<input defaultValue={image.name}></input></span>
+                            <span>name:<input defaultValue={image.name} onChange={e => this.onChangename(e)}></input></span>
                             <span>size:{image.size}</span>
                             <a href={image.url} download>↓ダウンロード</a>
                         </div>
@@ -88,7 +93,7 @@ class ImageDetail extends Component {
 
 
                     tags:{this.state.tags.map(tag => (
-                        <span className="tag" key={tag.name}>#{tag.name} </span>
+                        <span className="tag" key={tag.name}>#{tag.name}<button value={tag.name} onClick={e => this.deletetag(e)}>×</button> </span>
                     ))}
                     <input type="text" autoComplete="on" list="deftags" onChange={e => this.onChangeAddtag(e)}></input>
 
@@ -109,6 +114,11 @@ class ImageDetail extends Component {
     }
     test() {
         alert("test message");
+    }
+    onChangename(e) {
+        this.setState({
+            renewNickname: e.target.value
+        });
     }
     addtag() {
         //新規タグか
@@ -142,6 +152,35 @@ class ImageDetail extends Component {
             })
         }
     }
+    deletetag(e) {
+        console.log(e.target.value);
+        const tagname = e.target.value;
+        //deftagにあるか
+        if (!this.notIndeftags(tagname)) {
+            const tagid = this.getTagidByname(tagname);
+            //あれば削除リストへ
+            this.setState({
+                deldeftags: this.state.deldeftags.concat(tagid)
+            });
+        }
+        //tagから削除
+        const renewtags = this.state.tags.filter(n => {
+            return n.name !== tagname;
+        });
+        this.setState({
+            tags: renewtags
+        });
+    }
+
+    notIndeftags(name) {
+        var bool = true;
+        for (var i in this.state.deftags) {
+            if (this.state.deftags[i].name === name) {
+                bool = false;
+            }
+        }
+        return bool;
+    }
     notIndefault() {
         var bool = true;
         for (var i in this.state.defaultTags) {
@@ -168,9 +207,66 @@ class ImageDetail extends Component {
         });
     }
     onUpdate = () => {
+        //ニックネームの更新
+        if (this.state.file[0].name !== this.state.renewNickname) {
+            var renewdata = {
+                imageid: this.state.imageid,
+                nickname: this.state.renewNickname
+            }
+            fetch("http://localhost:4000/updateimage", {
+                method: 'POST', body: JSON.stringify(renewdata), mode: 'cors',
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            })
+                .then(response => response.json());
+        }
 
-        //更新POST
-        alert("更新しました");
+
+        //既存tag関係の削除
+        if (this.state.deldeftags.length > 0) {
+            var deldata = {
+                imageid: this.state.imageid,
+                idlist: this.state.deldeftags
+            }
+            fetch("http://localhost:4000/deletetagtoimage", {
+                method: 'POST', body: JSON.stringify(deldata), mode: 'cors',
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            })
+                .then(response => response.json());
+        }
+
+        //idがｎのものループ
+        for (var n in this.state.tags) {
+            if (this.state.tags[n].id === "n") {
+                //deftagからtagid取得
+                var tagid = this.getTagidByname(this.state.tags[n].name);
+                //fetchでtag関係post
+                var data = {
+                    imageid: this.state.imageid,
+                    tagid: tagid
+                };
+                fetch("http://localhost:4000/addtagtoimage", {
+                    method: 'POST', body: JSON.stringify(data), mode: 'cors',
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    }
+                })
+                    .then(response => response.json())
+            }
+        }
+        alert("更新しました")
+    }
+
+    getTagidByname(name) {
+        for (var i in this.state.defaultTags) {
+            if (name === this.state.defaultTags[i].name) {
+                return this.state.defaultTags[i].id;
+            }
+        }
+        return false;
     }
 
     onDelete = () => {
@@ -184,10 +280,13 @@ class ImageDetail extends Component {
                 "Content-Type": "application/json; charset=utf-8"
             }
         })
-            .then(response => response.json());
+            .then(response => response.json())
+            .then(posts => {
+                alert("削除しました")
+                this.props.history.push('/');
+            });
 
-        alert("削除しました")
-        this.props.history.push('/');
+
     }
 }
 

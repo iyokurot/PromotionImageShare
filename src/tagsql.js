@@ -2,10 +2,7 @@
 const express = require("express");
 const app = express();
 
-
 const multer = require('multer');
-
-
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -108,6 +105,45 @@ app.post('/gettagtoimage', function (req, res) {
     });
 });
 
+app.post('/gettagtoimageBytag', function (req, res) {
+    const id = req.body['tagid'];
+    connection.query('SELECT * from tagtoimage where tagid=?', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+app.post('/addtagtoimage', function (req, res) {
+    const imageid = req.body['imageid'];
+    const tagid = req.body['tagid'];
+    connection.query('INSERT INTO tagtoimage (imageid,tagid) VALUES (?, ?)', [imageid, tagid], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+app.post('/deletetagtoimage', function (req, res) {
+    const imageid = req.body['imageid'];
+    const idlist = req.body['idlist'];
+    connection.query('DELETE from tagtoimage where imageid=? and tagid in (?)', [imageid, idlist], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+
 app.get("/images", function (req, res) {
     connection.query('SELECT * from images LIMIT 0, 100', function (
         error,
@@ -125,6 +161,34 @@ app.post("/findimage", urlparser, function (req, res, next) {
 
     const id = req.body['imageid'];
     connection.query('SELECT * from images where id=?', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+//選択画像取得*複数
+app.post("/findimagemulti", urlparser, function (req, res, next) {
+    res.setHeader('Content-Type', 'text/plain');
+
+    const id = req.body['imageid'];
+    connection.query('SELECT * from images where id in (?)', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+app.post('/updateimage', function (req, res) {
+    const imageid = req.body['imageid'];
+    const name = req.body['nickname'];
+    connection.query('UPDATE images SET name=? where (id=?)', [name, imageid], function (
         error,
         results,
         fields
@@ -172,6 +236,13 @@ app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next)
 //画像の削除
 app.put('/deleteimage', function (req, res) {
     const id = req.body['imageid'];
+    connection.query('DELETE from tagtoimage where imageid=?', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+    });
     connection.query('DELETE from images where id=?', [id], function (
         error,
         results,

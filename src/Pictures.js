@@ -6,16 +6,19 @@ import { Link } from 'react-router-dom';
 class Pictures extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { posts: [] };
+        this.state = {
+            posts: [],
+            images: []
+        };
+
 
         fetch("http://localhost:4000/images")
             .then(response => response.json())
             .then(posts => this.setState({ posts }));
-
     }
     render() {
         return (
-            <div className="picture-select-area">{this.state.posts.map(post => (
+            <div className="picture-select-area">{this.props.imgs.map(post => (
                 <div className="images" key={post.id}>
                     <div className="images-inner" key={post.id}>
 
@@ -30,6 +33,10 @@ class Pictures extends React.Component {
             ))}
             </div>
         );
+    }
+
+    test() {
+        console.log("tessss");
     }
 }
 

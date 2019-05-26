@@ -5,15 +5,25 @@ import { withRouter } from 'react-router';
 
 class Menu extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            serchname: "ss",
+            img: []
+        };
+
+
+
+        this.serchClick = this.serchClick.bind(this);
+    }
+
     render() {
         return (
             <div className="Menu">
 
                 serch:add
-                <form onSubmit={this.submitSerch}>
-                    <input placeholder="name"></input>
-                    <button type="submit">serch</button>
-                </form>
+             <input placeholder="name" onChange={e => this.onChangeserch(e)}></input>
+                <button onClick={this.serchClick}>serch</button>
                 <button onClick={this.addClick}>add</button>
             </div>
         );
@@ -21,8 +31,14 @@ class Menu extends React.Component {
     addClick = () => {
         this.props.history.push('/addimage')
     }
-    submitSerch = () => {
-        alert(__dirname);
+    onChangeserch(e) {
+        const str = e.target.value;
+        this.setState({
+            serchname: str
+        })
+    }
+    serchClick() {
+        console.log(this.state.serchname);
     }
 }
 
