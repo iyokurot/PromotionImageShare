@@ -86,7 +86,7 @@ class ImageDetail extends Component {
                                 <img src={image.url} alt={image.name} className="img" key={image.id}></img>
                             </div>
                             <span>name:<input defaultValue={image.name} onChange={e => this.onChangename(e)}></input></span>
-                            <span>size:{image.size}</span>
+                            <span>size:{image.size} B</span>
                             <a href={image.url} download>↓ダウンロード</a>
                         </div>
                     ))}
@@ -104,10 +104,10 @@ class ImageDetail extends Component {
                     </datalist>
 
 
-                    <button onClick={this.addtag}>#</button><br></br>
+                    <button id="addtag" onClick={this.addtag}>#</button><br></br>
 
-                    <button onClick={this.onUpdate} className="buttons">更新</button>
-                    <button onClick={this.onDelete} className="buttons">削除</button>
+                    <button onClick={this.onUpdate} className="buttons" id="update-image">更新</button>
+                    <button onClick={this.onDelete} className="buttons" id="delete-image">削除</button>
                 </div>
             </div>
         );
@@ -121,35 +121,37 @@ class ImageDetail extends Component {
         });
     }
     addtag() {
-        //新規タグか
-        if (this.notIndefault()) {
-            //タグ追加
-            const data = {
-                newtag: this.state.newtag
-            };
-            fetch("http://localhost:4000/addtags", {
-                method: 'POST', body: JSON.stringify(data), mode: 'cors',
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8"
-                }
-            }).then((res) => {
-                //タグ更新
-                //タグ一覧取得
-                fetch("http://localhost:4000/tags")
-                    .then(response => response.json())
-                    .then(posts => this.setState({ defaultTags: posts }));
-            })
-        }
-
-        //同一タグが含まれているか
-        if (this.notIntags()) {
-            const nt = {
-                id: "n",
-                name: this.state.newtag
+        if (this.state.newtag !== "") {
+            //新規タグか
+            if (this.notIndefault()) {
+                //タグ追加
+                const data = {
+                    newtag: this.state.newtag
+                };
+                fetch("http://localhost:4000/addtags", {
+                    method: 'POST', body: JSON.stringify(data), mode: 'cors',
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    }
+                }).then((res) => {
+                    //タグ更新
+                    //タグ一覧取得
+                    fetch("http://localhost:4000/tags")
+                        .then(response => response.json())
+                        .then(posts => this.setState({ defaultTags: posts }));
+                })
             }
-            this.setState({
-                tags: this.state.tags.concat(nt)
-            })
+
+            //同一タグが含まれているか
+            if (this.notIntags()) {
+                const nt = {
+                    id: "n",
+                    name: this.state.newtag
+                }
+                this.setState({
+                    tags: this.state.tags.concat(nt)
+                })
+            }
         }
     }
     deletetag(e) {

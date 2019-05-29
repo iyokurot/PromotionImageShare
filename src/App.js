@@ -12,7 +12,7 @@ const Apps = () => (
     <div>
 
       <h1>Promotion images sharing </h1>
-      <Link to='/'>top</Link>
+      <Link to='/' id="back-to-top">top</Link>
       <Route exact path='/' component={App} />
       <Route path='/addimage' component={AddImage} />
       <Route path='/imagedetail/:id' component={ImageDetail} />
@@ -28,7 +28,8 @@ class App extends React.Component {
     this.state = {
       posts: [],
       images: [],
-      str: "test"
+      str: "test",
+      nowrender: ""
     };
 
     fetch("http://localhost:4000/tags")
@@ -44,16 +45,16 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Menu />
+        <Menu onEventCallBack={this.serchname} nowrender={this.state.nowrender} />
         <div className="App">
           <div className="tag-select-area">
             <ul>
               <li key="all">
-                <button onClick={this.alltag}>すべてのタグ</button>
+                <button className="tag-buttons" onClick={this.alltag}>すべてのタグ</button>
               </li>
               {this.state.posts.map(post => (
                 <li key={post.id}>
-                  <button onClick={this.serchtag.bind(this, post.id)}>#{post.name}</button>
+                  <button className="tag-buttons" onClick={this.serchtag.bind(this, post.id)}># {post.name}</button>
                 </li>
               ))}
             </ul>
@@ -64,6 +65,9 @@ class App extends React.Component {
     );
   }
   serchtag = (tagid) => {
+    this.setState({
+      nowrender: "タグ選択：" + this.gettagnamebyid(tagid)
+    });
     //タグ関係からimageid取得
     const data = {
       tagid: tagid
@@ -104,14 +108,48 @@ class App extends React.Component {
           })
         }
       });
+  }
 
+  serchname = (serchname) => {
 
+    this.setState({
+      nowrender: "検索：" + serchname.serchname
+    })
+
+    const imgdata = {
+      serch: serchname.serchname
+    }
+    fetch("http://localhost:4000/findimageByname", {
+      method: 'POST', body: JSON.stringify(imgdata), mode: 'cors',
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      }
+    })
+      .then(response => response.json())
+      .then(post => {
+        this.setState({
+          images: post
+        })
+      });
   }
 
   alltag() {
+    this.setState({
+      nowrender: ""
+    })
     fetch("http://localhost:4000/images")
       .then(response => response.json())
       .then(posts => this.setState({ images: posts }));
+  }
+
+  gettagnamebyid(id) {
+    var name = "";
+    this.state.posts.forEach(function (tag) {
+      if (tag.id === id) {
+        name = tag.name;
+      }
+    })
+    return name;
   }
 }
 

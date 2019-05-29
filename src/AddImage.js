@@ -9,13 +9,14 @@ export default class AddImage extends Component {
         this.state = {
             isUploading: false,
             images: [],
-            file2ndname: ""
+            file2ndname: "",
+            fileexist: false
         };
         this.handleOnDrop = this.handleOnDrop.bind(this);
         this.uploadaddImage = this.uploadaddImage.bind(this);
     }
     handleOnDrop = (files) => {
-        this.setState({ isUploading: true });
+        this.setState({ isUploading: true, fileexist: true });
         Promise.all(files.map(file => this.uploadImage(file)))
             .then(images => {
                 this.setState({
@@ -49,7 +50,7 @@ export default class AddImage extends Component {
     }
 
     uploadaddImage() {
-        if (parseInt(this.state.images[0].file.size) > 0) {
+        if (this.state.fileexist) {
             const imagedata = new FormData();
             imagedata.append('addnewimage', this.state.images[0].file);
             imagedata.append('imageTitle', this.state.file2ndname);
@@ -64,7 +65,8 @@ export default class AddImage extends Component {
                     //console.log(this.state.images[0].file);
                     this.setState({
                         images: [],
-                        file2ndname: ""
+                        file2ndname: "",
+                        fileexist: false
                     })
                 }).catch((error) => {
                     alert("failed");
@@ -104,10 +106,10 @@ export default class AddImage extends Component {
                     <ul>
                         {this.state.images.map(image =>
                             <div key={image.file.path}>
-                                <li>
+                                <li className="filelist">
                                     <p>name:<input type="text" defaultValue={image.file.name}
                                         onChange={e => this.handleOnChange(e)}></input>
-                                        file:{image.file.name}
+                                        file : {image.file.name}
                                     </p>
                                     tags:<button onClick={() => this.testprint()}>+</button>
                                 </li>
@@ -116,7 +118,7 @@ export default class AddImage extends Component {
                     </ul>
                 </div>
 
-                <button onClick={this.uploadaddImage}>Add</button>
+                <button id="imageadd-button" onClick={this.uploadaddImage}>Add</button>
             </div>
         );
     }

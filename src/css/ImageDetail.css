@@ -6,7 +6,8 @@
     background-color: gray;
     width: 80%;
     height: 300px;
-    margin: auto;
+    margin: 10px auto;
+    border-radius: 10px;
     
 }
 
@@ -16,7 +17,71 @@
     height: 100%;
 }
 
+.imagedata a{
+    color: #67c5ff;
+    margin: 5px;
+}
+
+.tag{
+    background-color: black;
+    border: solid 1px rgb(77, 77, 77);
+    color: #67c5ff;
+    margin: 3px;
+    border-radius: 0 15px 15px 0;
+}
+.tag button{
+    background-color: rgb(160, 160, 160);
+    border-radius: 50px;
+    width: 15px;
+    margin: 2px;
+}
+#addtag{
+    background-color: black;
+    color: #67c5ff;
+    padding: 2px;
+    width: 30px;
+    height: auto;
+    border: solid 2px #67c5ff;
+    border-radius: 2px;
+    transition: .4s;
+}
+#addtag:hover{
+    background: #67c5ff;
+    color: white;
+}
+
 .buttons{
     margin: 10px 20px;
     width: 200px;
+}
+#update-image{
+    display: inline-block;
+  padding: 0.3em 0.7em;
+  text-decoration: none;
+  font-size: 16px;
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+  border-radius: 3px;
+  transition: .4s;
+  
+}
+#update-image:hover{
+    background: #67c5ff;
+    color: white;
+}
+
+#delete-image{
+    display: inline-block;
+  padding: 0.3em 0.7em;
+  text-decoration: none;
+  font-size: 16px;
+  color: #ff6d6d;
+  border: solid 2px #ff6d6d;
+  border-radius: 3px;
+  transition: .4s;
+  
+}
+#delete-image:hover{
+    background: #ff6d6d;
+    color: white;
 }

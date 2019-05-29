@@ -1,31 +1,111 @@
+body{
+  background-color: rgb(24, 24, 24);
+  color: white;
+}
+h1{
+  position: relative;
+  display: inline-block;
+  padding: 0 55px;
+  margin-bottom: 0;
+}
+
+h1:before, h1:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  display: inline-block;
+  width: 45px;
+  height: 1px;
+  background-color: white;
+}
+
+h1:before {
+  left:0;
+}
+h1:after {
+  right: 0;
+}
+a{
+  color: white;
+}
+button{
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        padding: 0;
+        appearance: none;
+}
+
 .App {
   text-align: center;
 }
 .Menu{
-  background-color: yellow;
+  /*background-color: yellow;*/
   display: flex;
+}
+
+#back-to-top{
+  display: inline-block;
+  padding: 0.3em 0.7em;
+  text-decoration: none;
+  font-size: 20px;
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+  border-radius: 3px;
+  transition: .4s;
+  margin: 20px;
+  margin-top: 10px;
+  float: right;
+  width: 100px;
+  text-align: center;
   
+}
+#back-to-top:hover{
+  background: #67c5ff;
+  color: white;
 }
 
 
 .tag-select-area{
-  background-color: aquamarine;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  margin: 10px;
   color: aqua;
   flex-direction: column;
   align-items: center;
 }
 .tag-select-area li{
+  display:list-item;
+  zoom:normal;
   margin: 5px;
+  margin-left: 10px;
   text-align: left;
-  width: auto;
-  position: center;
 }
 .tag-select-area ul{
   list-style: none;
+  padding: 0;
+}
+
+.tag-buttons{
+  position: relative;
+  display: inline-block;
+  font-weight: bold;
+  padding: 0.25em 1em;
+  text-decoration: none;
+  color: #67c5ff;
+  background: black;
+  border-radius: 0 15px 15px 0;
+  transition: .4s;
+}
+.tag-buttons:hover{
+  background: #67c5ff;
+  color: white;
+
 }
 
 .picture-select-area{
-  background-color: darkcyan;
+  /*background-color: darkcyan;*/
 }
 
 @media ( min-width : 100px ){
@@ -44,9 +124,9 @@
 
 .images{
   width: 30%;
-  
+  border-radius: 10px;
   margin: 5px;
-  background-color: azure;
+  background-color: rgba(206, 206, 206, 0.5);
   float: left;
   position: relative;
 }
@@ -66,7 +146,6 @@
     height: 90%;
 }
 
-
 .images a{
   position: relative;
 }
@@ -76,4 +155,9 @@
   object-fit: contain;
   width: 100%;
   height: 90%;
+}
+
+.imagelinks{
+  color: #67c5ff;
+  text-decoration:none;
 }

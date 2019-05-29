@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import './css/Menu.css';
 import { withRouter } from 'react-router';
 
 
@@ -8,8 +9,9 @@ class Menu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            serchname: "ss",
-            img: []
+            serchname: "",
+            img: [],
+            nowrender: ""
         };
 
 
@@ -20,11 +22,11 @@ class Menu extends React.Component {
     render() {
         return (
             <div className="Menu">
-
-                serch:add
-             <input placeholder="name" onChange={e => this.onChangeserch(e)}></input>
-                <button onClick={this.serchClick}>serch</button>
-                <button onClick={this.addClick}>add</button>
+                <span id="kensaku">検索</span>
+                <input placeholder="name" onChange={e => this.onChangeserch(e)}></input>
+                <button id="serchimage-button" onClick={this.serchClick}>serch</button>
+                <span id="now-render">{this.props.nowrender}</span>
+                <button id="addimage-button" onClick={this.addClick}>addImage</button>
             </div>
         );
     }
@@ -38,7 +40,9 @@ class Menu extends React.Component {
         })
     }
     serchClick() {
-        console.log(this.state.serchname);
+        //console.log(this.state.serchname);
+        var serch = this.state.serchname;
+        this.props.onEventCallBack({ serchname: serch });
     }
 }
 

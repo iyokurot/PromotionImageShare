@@ -184,6 +184,19 @@ app.post("/findimagemulti", urlparser, function (req, res, next) {
         res.send(results);
     });
 });
+//名前検索
+app.post("/findimageByname", function (req, res, next) {
+    const name = req.body['serch'];
+    connection.query('SELECT * from images where name LIKE (?)', ['%' + name + '%'], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
 
 app.post('/updateimage', function (req, res) {
     const imageid = req.body['imageid'];

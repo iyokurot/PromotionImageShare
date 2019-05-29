@@ -19,17 +19,20 @@ class Pictures extends React.Component {
     render() {
         return (
             <div className="picture-select-area">{this.props.imgs.map(post => (
-                <div className="images" key={post.id}>
-                    <div className="images-inner" key={post.id}>
+                <Link to={'/imagedetail/' + post.id} key={post.id}>
+                    <div className="images" key={post.id}>
+                        <div className="images-inner" key={post.id}>
 
-                        <div className="image-sqare" key={post.id}>
-                            <img src={post.url} alt={post.name} className="img" key={post.id}></img><br></br>
+                            <div className="image-sqare" key={post.id}>
+                                <img src={post.url} alt={post.name} className="img" key={post.id}></img><br></br>
+                            </div>
                         </div>
+                        <span className="imagelinks">{post.name}</span>
+
+
+
                     </div>
-
-
-                    <Link to={'/imagedetail/' + post.id}>{post.name}</Link>
-                </div>
+                </Link>
             ))}
             </div>
         );
