@@ -273,21 +273,27 @@ class ImageDetail extends Component {
 
     onDelete = () => {
         //削除POST
-        const data = {
-            imageid: this.state.imageid
-        };
-        fetch("http://localhost:4000/deleteimage", {
-            method: 'PUT', body: JSON.stringify(data), mode: 'cors',
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            }
-        })
-            .then(response => response.json())
-            .then(posts => {
-                alert("削除しました")
-                this.props.history.push('/');
-            });
 
+        if (window.confirm('本当に画像を削除しますか？')) {
+            const data = {
+                imageid: this.state.imageid,
+                imagepath: this.state.file[0].filename
+            };
+            fetch("http://localhost:4000/deleteimage", {
+                method: 'PUT', body: JSON.stringify(data), mode: 'cors',
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            })
+                .then(response => response.json())
+                .then(posts => {
+                    alert("削除しました")
+                    this.props.history.push('/');
+                });
+
+        } else {
+            //alert("キャンセルしました");
+        }
 
     }
 }

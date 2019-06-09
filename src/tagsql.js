@@ -4,6 +4,7 @@ const app = express();
 
 const multer = require('multer');
 var bodyParser = require('body-parser');
+var fs = require('fs');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -41,7 +42,7 @@ let connection = mysql.createConnection({
     database: 'promotion',
     password: 'kayopile'
 });
-
+//タグーーー
 app.get("/posts", function (req, res) {
     connection.query('SELECT * from tags LIMIT 0, 10', function (
         error,
@@ -54,7 +55,7 @@ app.get("/posts", function (req, res) {
 });
 
 app.get("/tags", function (req, res) {
-    connection.query('SELECT * from tags LIMIT 0, 10', function (
+    connection.query('SELECT * from tags LIMIT 0, 100', function (
         error,
         results,
         fields
@@ -93,6 +94,30 @@ app.post('/addtags', function (req, res) {
     });
 });
 
+app.post('/deletetags', function (req, res) {
+    const id = req.body['tagid'];
+    connection.query('DELETE from tags WHERE (id=?)', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+app.post('/deletetagall', function (req, res) {
+    connection.query('DELETE from tags', function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+//タグ画像関係ーーー
 app.post('/gettagtoimage', function (req, res) {
     const id = req.body['imageid'];
     connection.query('SELECT * from tagtoimage where imageid=?', [id], function (
@@ -143,7 +168,43 @@ app.post('/deletetagtoimage', function (req, res) {
     });
 });
 
+app.post('/deletetagtoimageBytagid', function (req, res) {
+    const id = req.body['tagid'];
+    connection.query('DELETE from tagtoimage where tagid=?', [id], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
 
+app.post('/deletetagtoimageall', function (req, res) {
+    connection.query('TRUNCATE TABLE tagtoimage', function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+app.post('/jointagtoimage', function (req, res) {
+    const one = req.body['one'];
+    const two = req.body['tagid'];
+    connection.query('UPDATE tagtoimage SET tagid=? WHERE (tagid=?)', [one, two], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+//画像ーーー
 app.get("/images", function (req, res) {
     connection.query('SELECT * from images LIMIT 0, 100', function (
         error,
@@ -184,10 +245,23 @@ app.post("/findimagemulti", urlparser, function (req, res, next) {
         res.send(results);
     });
 });
-//名前検索
+//名前検索*nickname
 app.post("/findimageByname", function (req, res, next) {
     const name = req.body['serch'];
     connection.query('SELECT * from images where name LIKE (?)', ['%' + name + '%'], function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+//名前検索*filename
+app.post("/findimageByfilename", function (req, res, next) {
+    const name = req.body['name'];
+    connection.query('SELECT * from images where filename =?', [name], function (
         error,
         results,
         fields
@@ -233,9 +307,10 @@ app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next)
     const thisURL = "http://localhost:4000/imagepath/" + req.file.originalname;
     const filename = addnewimage;
     const filesize = req.file.size;
+    const originalname = req.file.originalname;
 
     //Mysqlにinsert
-    connection.query('INSERT INTO images (url, name, size) VALUES (?, ?, ?)', [thisURL, filename, filesize], function (
+    connection.query('INSERT INTO images (url, name, size,filename) VALUES (?, ?, ?, ?)', [thisURL, filename, filesize, originalname], function (
         error,
         results,
         fields
@@ -249,6 +324,11 @@ app.post('/uploadimage', upload.single('addnewimage'), function (req, res, next)
 //画像の削除
 app.put('/deleteimage', function (req, res) {
     const id = req.body['imageid'];
+    const path = 'promotionImages/' + req.body['imagepath'];
+
+    fs.unlink(path, (err) => {
+        if (err) throw err;
+    });
     connection.query('DELETE from tagtoimage where imageid=?', [id], function (
         error,
         results,
@@ -265,3 +345,30 @@ app.put('/deleteimage', function (req, res) {
         res.send(results);
     });
 });
+
+app.post('/deleteimageall', function (req, res) {
+
+    connection.query('SELECT * from images ', function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        for (var i in results) {
+            const path = 'promotionImages/' + results[i].filename;
+
+            fs.unlink(path, (err) => {
+                if (err) throw err;
+            });
+        }
+    });
+
+    connection.query('DELETE from images', function (
+        error,
+        results,
+        fields
+    ) {
+        if (error) throw error;
+        res.send(results);
+    });
+})

@@ -104,9 +104,6 @@ button{
 
 }
 
-.picture-select-area{
-  /*background-color: darkcyan;*/
-}
 
 @media ( min-width : 100px ){
     .App{
@@ -160,4 +157,35 @@ button{
 .imagelinks{
   color: #67c5ff;
   text-decoration:none;
+}
+
+.button-blue{
+  display: inline-block;
+  padding: 0.3em 0.7em;
+  text-decoration: none;
+  font-size: 16px;
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+  border-radius: 3px;
+  transition: .4s;
+  margin: 5px;
+}
+.button-blue:hover{
+  background: #67c5ff;
+  color: white;
+}
+.button-green{
+  display: inline-block;
+  padding: 0.3em 0.7em;
+  text-decoration: none;
+  font-size: 16px;
+  color: #85ffb4;
+  border: solid 2px #85ffb4;
+  border-radius: 3px;
+  transition: .4s;
+  margin: 5px;
+}
+.button-green:hover{
+  background: #85ffb4;
+  color: white;
 }

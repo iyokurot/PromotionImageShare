@@ -26,12 +26,17 @@ class Menu extends React.Component {
                 <input placeholder="name" onChange={e => this.onChangeserch(e)}></input>
                 <button id="serchimage-button" onClick={this.serchClick}>serch</button>
                 <span id="now-render">{this.props.nowrender}</span>
+
                 <button id="addimage-button" onClick={this.addClick}>addImage</button>
+                <button className="button-green" onClick={this.settingClick}>setting</button>
             </div>
         );
     }
     addClick = () => {
         this.props.history.push('/addimage')
+    }
+    settingClick = () => {
+        this.props.history.push('/settings');
     }
     onChangeserch(e) {
         const str = e.target.value;

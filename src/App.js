@@ -3,7 +3,8 @@ import './App.css';
 
 import AddImage from './AddImage';
 import Menu from './Menu';
-import Pictures from './Pictures'
+import Pictures from './Pictures';
+import Settings from './Settings';
 import ImageDetail from './ImageDetail';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
 
@@ -15,6 +16,7 @@ const Apps = () => (
       <Link to='/' id="back-to-top">top</Link>
       <Route exact path='/' component={App} />
       <Route path='/addimage' component={AddImage} />
+      <Route path='/settings' component={Settings} />
       <Route path='/imagedetail/:id' component={ImageDetail} />
 
 
