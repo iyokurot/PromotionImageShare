@@ -3,6 +3,8 @@ import './App.css';
 import './css/Settings.css';
 import { withRouter } from 'react-router';
 
+import Help from './helps/Help';
+
 class Settings extends React.Component {
     constructor(props) {
         super(props);
@@ -16,6 +18,9 @@ class Settings extends React.Component {
             tagalldelete: false,
             imagesetting: false,
             help: false,
+            helplist: [],//ヘルプ一覧←子から
+            helpdetail: false,//ヘルプの詳細表示
+            helpnum: "",//helpのid
             tags: []
         };
         this.getTagfetch();
@@ -71,11 +76,16 @@ class Settings extends React.Component {
                 <div className="setting-area">
                     <span onClick={this.openhelp}>ヘルプ ▽</span><br></br>
                     <div style={{ display: this.state.help ? '' : 'none' }}>
-                        <button className="button-blue" >画像追加</button>
-                        <button className="button-blue" >画像ダウンロード</button>
-                        <button className="button-blue" >画像更新</button>
-                        <button className="button-blue" >検索</button>
-                        <button className="button-blue" >タグ</button>
+                        {this.state.helplist.map(help => (
+                            <button className="button-blue" onClick={this.openhelpdetail} value={help.id} key={help.id}>
+                                {help.name}
+                            </button>
+                        ))}
+                        <br></br>
+                        <div style={{ display: this.state.helpdetail ? '' : 'none' }}>
+                            <Help num={this.state.helpnum} helplist={this.sethelplist} />
+                        </div>
+
                     </div>
                 </div>
 
@@ -195,10 +205,32 @@ class Settings extends React.Component {
             imagesetting: !this.state.imagesetting
         });
     }
+
+    sethelplist = (array) => {
+        this.setState({
+            helplist: array
+        })
+    }
+
+
     openhelp = () => {
         this.setState({
             help: !this.state.help
         });
+    }
+
+    openhelpdetail = (e) => {
+        const id = e.target.value;
+        if (id === this.state.helpnum) {
+            this.setState({
+                helpdetail: !this.state.helpdetail
+            });
+        } else {
+            this.setState({
+                helpdetail: true,
+                helpnum: id
+            });
+        }
     }
 
     deletealltag() {
